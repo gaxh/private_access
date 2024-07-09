@@ -2,28 +2,55 @@
 #define __ACCESS_HELPER_H__
 
 
-#define GenerateFieldAccessor(AccessName, ClassName, MemberName, MemberType) \
-template<typename Class, typename Member, Member Class::* Address> \
-struct AccessName##_FieldAccessGenerator { \
-    friend Member & AccessName (Class &inst) { \
+#define GenerateFieldAccessor(AccessorName, ClassName, MemberName, MemberType) \ template<MemberType ClassName::* Address> \
+struct AccessorName##_FieldAccessorGenerator { \
+    friend MemberType & AccessorName (ClassName &inst) { \
         return inst.*Address; \
     } \
 }; \
 template \
-struct AccessName##_FieldAccessGenerator<ClassName, MemberType, &ClassName::MemberName>; \
-MemberType & AccessName (ClassName &inst);
+struct AccessorName##_FieldAccessorGenerator<&ClassName::MemberName>; \
+MemberType & AccessorName (ClassName &);
 
 
-#define GenerateFieldConstAccessor(AccessName, ClassName, MemberName, MemberType) \
-template<typename Class, typename Member, Member Class::* Address> \
-struct AccessName##_FieldConstAccessGenerator { \
-    friend const Member & AccessName (const Class &inst) { \
+#define GenerateFieldConstAccessor(AccessorName, ClassName, MemberName, MemberType) \
+template<MemberType ClassName::* Address> \
+struct AccessorName##_FieldConstAccessorGenerator { \
+    friend MemberType & AccessorName (const ClassName &inst) { \
         return inst.*Address; \
     } \
 }; \
 template \
-struct AccessName##_FieldConstAccessGenerator<ClassName, MemberType, &ClassName::MemberName>; \
-const MemberType & AccessName (const ClassName &inst);
+struct AccessorName##_FieldConstAccessorGenerator<&ClassName::MemberName>; \
+MemberType & AccessorName (const ClassName &);
+
+
+#define GenerateMethodCaller(CallerName, ClassName, MethodName, ReturnType, ...) \
+template<ReturnType (ClassName::*Address)( __VA_ARGS__ )> \
+struct CallerName##_MethodCallerGenerator { \
+    template<typename ... Args> \
+    friend ReturnType CallerName (ClassName &inst, Args && ... args) { \
+        return (inst.*Address)(std::forward<Args>(args)...); \
+    } \
+}; \
+template \
+struct CallerName##_MethodCallerGenerator<&ClassName::MethodName>; \
+template<typename ... Args> \
+int CallerName (ClassName &inst, Args && ... args);
+
+
+#define GenerateMethodConstCaller(CallerName, ClassName, MethodName, ReturnType, ...) \
+template<ReturnType (ClassName::*Address)( __VA_ARGS__ ) const> \
+struct CallerName##_MethodConstCallerGenerator { \
+    template<typename ... Args> \
+    friend ReturnType CallerName (const ClassName &inst, Args && ... args) { \
+        return (inst.*Address)(std::forward<Args>(args)...); \
+    } \
+}; \
+template \
+struct CallerName##_MethodConstCallerGenerator<&ClassName::MethodName>; \
+template<typename ... Args> \
+int CallerName (const ClassName &inst, Args && ... args);
 
 
 #endif
