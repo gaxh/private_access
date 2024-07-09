@@ -2,27 +2,27 @@
 #define __ACCESS_HELPER_H__
 
 
-#define GenerateAccessor(AccessName, ClassName, MemberName, MemberType) \
+#define GenerateFieldAccessor(AccessName, ClassName, MemberName, MemberType) \
 template<typename Class, typename Member, Member Class::* Address> \
-struct AccessName##_AccessGenerator { \
+struct AccessName##_FieldAccessGenerator { \
     friend Member & AccessName (Class &inst) { \
         return inst.*Address; \
     } \
 }; \
 template \
-struct AccessName##_AccessGenerator<ClassName, MemberType, &ClassName::MemberName>; \
+struct AccessName##_FieldAccessGenerator<ClassName, MemberType, &ClassName::MemberName>; \
 MemberType & AccessName (ClassName &inst);
 
 
-#define GenerateConstAccessor(AccessName, ClassName, MemberName, MemberType) \
+#define GenerateFieldConstAccessor(AccessName, ClassName, MemberName, MemberType) \
 template<typename Class, typename Member, Member Class::* Address> \
-struct AccessName##_ConstAccessGenerator { \
+struct AccessName##_FieldConstAccessGenerator { \
     friend const Member & AccessName (const Class &inst) { \
         return inst.*Address; \
     } \
 }; \
 template \
-struct AccessName##_ConstAccessGenerator<ClassName, MemberType, &ClassName::MemberName>; \
+struct AccessName##_FieldConstAccessGenerator<ClassName, MemberType, &ClassName::MemberName>; \
 const MemberType & AccessName (const ClassName &inst);
 
 

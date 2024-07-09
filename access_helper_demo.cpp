@@ -38,32 +38,34 @@ class Demo {
         }
 };
 
-GenerateAccessor(AccessOne, Demo, one, int);
-GenerateAccessor(AccessTwo, Demo, two, int);
+namespace DemoAccess {
 
-GenerateConstAccessor(AccessConstOne, Demo, one, int);
-GenerateConstAccessor(AccessConstTwo, Demo, two, int);
+GenerateFieldAccessor(AccessOne, Demo, one, int);
+GenerateFieldAccessor(AccessTwo, Demo, two, int);
 
-GenerateAccessor(AccessSvector, Demo, svector, std::vector<std::string>);
+GenerateFieldConstAccessor(AccessConstOne, Demo, one, int);
+GenerateFieldConstAccessor(AccessConstTwo, Demo, two, int);
+
+GenerateFieldAccessor(AccessSvector, Demo, svector, std::vector<std::string>);
+
+}
 
 int main() {
     Demo d;
     d.Dump();
     d.DumpSvector();
 
-    AccessOne(d) = 88888;
-    AccessTwo(d) = 99999;
+    DemoAccess::AccessOne(d) = 88888;
+    DemoAccess::AccessTwo(d) = 99999;
 
-    AccessSvector(d).emplace_back("first_string");
-    AccessSvector(d).emplace_back("second_string");
+    DemoAccess::AccessSvector(d).emplace_back("first_string");
+    DemoAccess::AccessSvector(d).emplace_back("second_string");
 
     d.Dump();
     d.DumpSvector();
 
     const Demo e;
-    printf("const: %d %d\n", AccessConstOne(e), AccessConstTwo(e));
-
-    // AccessConstOne(e) = 777;
+    printf("const: %d %d\n", DemoAccess::AccessConstOne(e), DemoAccess::AccessConstTwo(e));
 
     return 0;
 }
