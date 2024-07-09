@@ -2,7 +2,8 @@
 #define __ACCESS_HELPER_H__
 
 
-#define GenerateFieldAccessor(AccessorName, ClassName, MemberName, MemberType) \ template<MemberType ClassName::* Address> \
+#define GenerateFieldAccessor(AccessorName, ClassName, MemberName, MemberType) \
+template<MemberType ClassName::* Address> \
 struct AccessorName##_FieldAccessorGenerator { \
     friend MemberType & AccessorName (ClassName &inst) { \
         return inst.*Address; \
@@ -36,7 +37,7 @@ struct CallerName##_MethodCallerGenerator { \
 template \
 struct CallerName##_MethodCallerGenerator<&ClassName::MethodName>; \
 template<typename ... Args> \
-int CallerName (ClassName &inst, Args && ... args);
+ReturnType CallerName (ClassName &inst, Args && ... args);
 
 
 #define GenerateMethodConstCaller(CallerName, ClassName, MethodName, ReturnType, ...) \
@@ -50,7 +51,7 @@ struct CallerName##_MethodConstCallerGenerator { \
 template \
 struct CallerName##_MethodConstCallerGenerator<&ClassName::MethodName>; \
 template<typename ... Args> \
-int CallerName (const ClassName &inst, Args && ... args);
+ReturnType CallerName (const ClassName &inst, Args && ... args);
 
 
 #endif
